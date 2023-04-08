@@ -4,11 +4,12 @@
 	<title>RPG de Mesa - Controle de Vida</title>
 	<script>
 		var vida = [];
-		
+
 		function adicionarJogador() {
 			var nome = document.getElementById("nome").value;
-			if(nome != "") {
-				vida.push({"nome": nome, "vida": 100});
+			var vidaInicial = parseInt(document.getElementById("vidaInicial").value);
+			if (nome != "" && !isNaN(vidaInicial) && vidaInicial >= 0) {
+				vida.push({"nome": nome, "vida": vidaInicial});
 				atualizarTabela();
 			}
 		}
@@ -66,6 +67,8 @@
 	<h1>RPG de Mesa - Controle de Vida</h1>
 	<label for="nome">Nome do jogador:</label>
 	<input type="text" id="nome">
+	<label for="vidaInicial">Vida inicial:</label>
+	<input type="number" id="vidaInicial">
 	<button onclick="adicionarJogador()">Adicionar jogador</button>
 	<table>
 		<thead>
