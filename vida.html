@@ -3,127 +3,82 @@
 <head>
 	<title>RPG de Mesa - Controle de Vida</title>
 	<script>
-		// Define a classe Jogador com as propriedades nome e pontosDeVida
-		class Jogador {
-			constructor(nome, pontosDeVida) {
-				this.nome = nome;
-				this.pontosDeVida = pontosDeVida;
-				this.pontosDeVidaMaximos = pontosDeVida;
-			}
-			
-			// Função para causar dano ao jogador
-			causarDano(dano) {
-				this.pontosDeVida -= dano;
-				if (this.pontosDeVida < 0) {
-					this.pontosDeVida = 0;
-				}
-				this.atualizarExibicao();
-			}
-			
-			// Função para curar o jogador
-			curar(cura) {
-				this.pontosDeVida += cura;
-				if (this.pontosDeVida > this.pontosDeVidaMaximos) {
-					this.pontosDeVida = this.pontosDeVidaMaximos;
-				}
-				this.atualizarExibicao();
-			}
-			
-			// Função para atualizar a exibição dos pontos de vida
-			atualizarExibicao() {
-				document.getElementById("pontos-de-vida-" + this.nome).innerHTML = this.pontosDeVida;
-				document.getElementById("pontos-de-vida-maximos-" + this.nome).innerHTML = this.pontosDeVidaMaximos;
-			}
-		}
+		var vida = [];
 		
-		// Define um array de jogadores
-		var jogadores = [
-			new Jogador("Player 1", 20),
-			new Jogador("Player 2", 20),
-			new Jogador("Player 3", 20)
-		];
-		
-		// Função para adicionar um novo jogador
 		function adicionarJogador() {
-			var nome = document.getElementById("nome-jogador").value;
-			var pontosDeVida = parseInt(document.getElementById("pontos-de-vida-iniciais").value);
-			jogadores.push(new Jogador(nome, pontosDeVida));
-			atualizarExibicaoJogadores();
-		}
-		
-		// Função para atualizar a exibição dos jogadores
-		function atualizarExibicaoJogadores() {
-			var tabela = document.getElementById("tabela-jogadores");
-			// Limpa a tabela atual
-			while (tabela.rows.length > 1) {
-				tabela.deleteRow(-1);
-			}
-			// Preenche a tabela com os jogadores
-			for (var i = 0; i < jogadores.length; i++) {
-				var jogador = jogadores[i];
-				var row = tabela.insertRow(-1);
-				var cellNome = row.insertCell(0);
-				var cellPontosDeVida = row.insertCell(1);
-				var cellPontosDeVidaMaximos = row.insertCell(2);
-				var cellCausarDano = row.insertCell(3);
-				var cellCurar = row.insertCell(4);
-				cellNome.innerHTML = jogador.nome;
-				cellPontosDeVida.innerHTML = "<span id='pontos-de-vida-" + jogador.nome + "'>" + jogador.p
-				cellPontosDeVidaMaximos.innerHTML = "<span id='pontos-de-vida-maximos-" + jogador.nome + "'>" + jogador.pontosDeVidaMaximos + "</span>";
-				cellCausarDano.innerHTML = "<button onclick='causarDano(\"" + jogador.nome + "\")'>Causar Dano</button>";
-				cellCurar.innerHTML = "<button onclick='curar(\"" + jogador.nome + "\")'>Curar</button>";
+			var nome = document.getElementById("nome").value;
+			if(nome != "") {
+				vida.push({"nome": nome, "vida": 100});
+				atualizarTabela();
 			}
 		}
 		
-		// Função para causar dano a um jogador
-		function causarDano(nome) {
-			var jogador = null;
-			for (var i = 0; i < jogadores.length; i++) {
-				if (jogadores[i].nome == nome) {
-					jogador = jogadores[i];
-					break;
-				}
-			}
-			if (jogador != null) {
-				jogador.causarDano(1); // Causa 1 ponto de dano
-			}
-		}
-		
-		// Função para curar um jogador
-		function curar(nome) {
-			var jogador = null;
-			for (var i = 0; i < jogadores.length; i++) {
-				if (jogadores[i].nome == nome) {
-					jogador = jogadores[i];
-					break;
-				}
-			}
-			if (jogador != null) {
-				jogador.curar(1); // Cura 1 ponto de vida
+		function atualizarTabela() {
+			var tabela = document.getElementById("tabela");
+			tabela.innerHTML = "";
+			for(var i = 0; i < vida.length; i++) {
+				var linha = tabela.insertRow();
+				var colunaNome = linha.insertCell();
+				colunaNome.innerHTML = vida[i].nome;
+				var colunaVida = linha.insertCell();
+				colunaVida.innerHTML = vida[i].vida;
+				var colunaBotaoDano = linha.insertCell();
+				var botaoDano = document.createElement("button");
+				botaoDano.innerHTML = "Tirar dano";
+				botaoDano.setAttribute("onclick", "tirarVida(" + i + ")");
+				colunaBotaoDano.appendChild(botaoDano);
+				var colunaBotaoCura = linha.insertCell();
+				var botaoCura = document.createElement("button");
+				botaoCura.innerHTML = "Curar";
+				botaoCura.setAttribute("onclick", "curarVida(" + i + ")");
+				colunaBotaoCura.appendChild(botaoCura);
 			}
 		}
 		
-		// Inicializa a exibição dos jogadores
-		atualizarExibicaoJogadores();
+		function tirarVida(index) {
+			var dano = parseInt(prompt("Quantidade de dano:"));
+			if(isNaN(dano) || dano < 0) {
+				alert("Por favor, informe uma quantidade de dano válida.");
+				return;
+			}
+			vida[index].vida -= dano;
+			if(vida[index].vida < 0) {
+				vida[index].vida = 0;
+			}
+			atualizarTabela();
+		}
+		
+		function curarVida(index) {
+			var cura = parseInt(prompt("Quantidade de cura:"));
+			if(isNaN(cura) || cura < 0) {
+				alert("Por favor, informe uma quantidade de cura válida.");
+				return;
+			}
+			vida[index].vida += cura;
+			if(vida[index].vida > 100) {
+				vida[index].vida = 100;
+			}
+			atualizarTabela();
+		}
 	</script>
 </head>
 <body>
 	<h1>RPG de Mesa - Controle de Vida</h1>
-	<h2>Jogadores</h2>
-	<table id="tabela-jogadores">
-		<tr>
-			<th>Nome</th>
-			<th>Pontos de Vida</th>
-			<th>Pontos de Vida Máximos</th>
-			<th></th>
-			<th></th>
-		</tr>
+	<label for="nome">Nome do jogador:</label>
+	<input type="text" id="nome">
+	<button onclick="adicionarJogador()">Adicionar jogador</button>
+	<table>
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>Vida</th>
+				<th></th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="tabela">
+		</tbody>
 	</table>
-	<h2>Adicionar Jogador</h2>
-	<label for="nome-jogador">Nome: </label>
-	<input type="text" id="nome-jogador"><br>
-	<label for="pontos-de-vida-iniciais">Pontos de Vida Iniciais: </label>
-	<input type="number" id="pontos-de-vida-iniciais" value="20"><br>
-	<button onclick="adicionarJogador()">Adicionar</button>
 </body>
 </html>
+
